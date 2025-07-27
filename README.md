@@ -3,7 +3,7 @@
 EmoAid is a multilingual, emotionally intelligent chatbot that supports users going through emotional 
 distress. It understands sensitive emotions like loneliness, heartbreak, or anxiety and offers tailored responses 
 like a kind friend, therapist, or motivator. Built with empathy at its core, EmoAid helps users express themselves 
-through text or voice in English, Urdu, or Punjabi.
+through text or voice in English, Urdu, Hindi etc.
 
 ### 🏆 Submission for CS Girlies Hackathon 2025
 
@@ -18,7 +18,7 @@ through text or voice in English, Urdu, or Punjabi.
   - Therapist 🩺  
   - Motivator 💪  
   - Funny Friend 😂  
-- 🌍 **Multilingual Support** – Communicate in **English**, **Urdu**, or **Punjabi**
+- 🌍 **Multilingual Support** – Communicate in **English**, **Urdu**, or **Chinese**,etc
 - 📝 **Chat History Saving** – Log and review past emotional reflections
 - 🤖 Powered by **Groq API** for real-time large language model (LLM) chat
 
@@ -50,7 +50,7 @@ streamlit run app.py
 
 1.Voice/Text Input → Whisper (Speech-to-Text)
 
-2.Translation (Urdu/Punjabi → English)
+2.Translation (Urdu/Punjabi/any other language → English)
 
 3.Sentiment & Mood Tagging (HuggingFace)
 
