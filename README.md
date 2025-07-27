@@ -48,19 +48,19 @@ streamlit run app.py
 
 ## 📌 Architecture Overview
 
-Voice/Text Input → Whisper (Speech-to-Text)
-↓
-Translation (Urdu/Punjabi → English)
-↓
-Sentiment & Mood Tagging (HuggingFace)
-↓
-LLM (Groq API with Custom Prompting)
-↓
-Response (with Personality Mode)
-↓
-Output (Text + Voice + UI Display)
+1.Voice/Text Input → Whisper (Speech-to-Text)
 
-##💡 Use Cases
+2.Translation (Urdu/Punjabi → English)
+
+3.Sentiment & Mood Tagging (HuggingFace)
+
+4.LLM (Groq API with Custom Prompting)
+
+5.Response (with Personality Mode)
+
+6.Output (Text + Voice + UI Display)
+
+## 💡 Use Cases
 
 Teenagers or students facing anxiety
 Anyone struggling with emotional overwhelm
