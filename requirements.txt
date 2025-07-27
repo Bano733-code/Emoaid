@@ -1,3 +1,9 @@
 streamlit
-transformers
-sentencepiece
+streamlit_mic_recorder
+transformers==4.34.1
+torch
+torchaudio
+gtts
+deep-translator
+googletrans==4.0.0-rc1
+requests
