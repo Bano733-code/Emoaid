@@ -70,9 +70,9 @@ Daily emotional journaling & mental health check-ins
 | Member Name           | Contributions                                     |
 | ---------------       | ------------------------------------------------- |
 | Bano Rani (Leader)    | Voice-to-text, Groq API integration, Streamlit UI
-|                       TTS, Voice Recorder, HuggingFace Deployment 
+|                       , Voice Recorder, HuggingFace Deployment 
 | Arooj Shehzadi        | Mood detection, Personality switch, Translation   |
-
+                          ,TTS
 🎯 Built for: CS Girlies Hackathon
 
 ## Future Enhancements
