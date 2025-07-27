@@ -41,12 +41,13 @@ through text or voice in English, Urdu, or Punjabi.
 ## 🚀 Run EmoAid Locally
 
 #bash
-git clone https://github.com/bano-733/emoaid.git
+git clone https://github.com/Bano733-code/Emoaid/tree/main
 cd emoaid
 pip install -r requirements.txt
 streamlit run app.py
 
-##Arcitecture Overview
+## 📌 Architecture Overview
+
 Voice/Text Input → Whisper (Speech-to-Text)
 ↓
 Translation (Urdu/Punjabi → English)
@@ -59,7 +60,8 @@ Response (with Personality Mode)
 ↓
 Output (Text + Voice + UI Display)
 
-##Use Cases
+##💡 Use Cases
+
 Teenagers or students facing anxiety
 Anyone struggling with emotional overwhelm
 Daily emotional journaling & mental health check-ins
