@@ -1,5 +1,5 @@
 # app.py
-import streamlit as st
+import streamlit as st 
 import requests
 from deep_translator import GoogleTranslator
 from gtts import gTTS
@@ -73,6 +73,22 @@ if not api_key:
     st.error("❌ Groq API key not found. Please set it in secrets.toml or as an environment variable.")
 
 language = st.sidebar.selectbox("🌍 Language", ["English", "Urdu", "Punjabi","Korean","Bangoli","Hindi","Pahto","Balochi","French","Arabic","Chinese","Spanish","German"])
+language_codes = {
+    "English": "en",
+    "Urdu": "ur",
+    "Punjabi": "pa",
+    "Korean": "ko",
+    "Bangoli": "bn",
+    "Hindi": "hi",
+    "Pahto": "ps",
+    "Balochi": "bal",
+    "French": "fr",
+    "Arabic": "ar",
+    "Chinese": "zh-CN",
+    "Spanish": "es",
+    "German": "de"
+}
+
 personality = st.sidebar.selectbox("🎭 Personality Mode", ["Therapist", "Motivator", "Funny Friend",
     "Wise Elder", "Gentle Listener", "Romantic Poet",
     "Spiritual Guide", "Empathetic Sister", "Tough Love Coach",
@@ -142,20 +158,18 @@ if st.button("Send") and user_input:
         st.warning("Please add your GROQ API key.")
     else:
         response = get_groq_response(user_input, personality, api_key)
-        #st.session_state.chat_history.append((personality, response))
 
-
+        target_lang_code = language_codes.get(language, "en")
 
         if language != "English":
-            response_translated = translate_text(response, target_lang="ur" if language == "Urdu" else "pa")
+            response_translated = translate_text(response, target_lang=target_lang_code)
         else:
             response_translated = response
 
         mood_tag = detect_mood(user_input)
         st.session_state.chat_history.append(("EmoAid", f"{response_translated} \n\n💬 *Mood Detected: {mood_tag}*"))
-
         if speak:
-            speak_text(response_translated, lang="en" if language == "English" else "ur")
+           speak_text(response_translated, lang=target_lang_code)
 
 # ------------------- CHAT DISPLAY -------------------
 st.markdown("---")
