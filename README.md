@@ -31,8 +31,7 @@ through text or voice in English, Urdu, Hindi etc.
 | Frontend             | Streamlit                          |
 | Voice Recognition    | Whisper + torchaudio               |
 | Translation          | deep_translator (GoogleTranslator) |
-| AI Model             | Whisper (OpenAI model via          | 
-                         HuggingFace)                       |
+| AI Model             | GROQ API                           |
 | Text-to-Speech       | gTTS (Google Text-to-Speech)       |
 | Emotion Detection    | HuggingFace Sentiment Models       |
 | Deployment           | Hugging Face Spaces (Streamlit)    |
@@ -71,10 +70,10 @@ Daily emotional journaling & mental health check-ins
 ## Team & Contribution
 | Member Name           | Contributions                                     |
 | ---------------       | ------------------------------------------------- |
-| Bano Rani (Leader)    | Voice-to-text, Groq API integration, Streamlit UI
-|                       , Voice Recorder, HuggingFace Deployment 
-| Arooj Shehzadi        | Mood detection, Personality switch, Translation 
-|                         ,TTS                         
+| Bano Rani (Leader)    | Voice-to-text, Groq API integration, Streamlit UI |
+|                       | Voice Recorder, HuggingFace Deployment            |
+| Arooj Shehzadi        | Mood detection, Personality switch, Translation   |
+|                       |TTS                                                |   
                           
 🎯 Built for: CS Girlies Hackathon
 
