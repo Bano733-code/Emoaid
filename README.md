@@ -29,9 +29,11 @@ through text or voice in English, Urdu, Hindi etc.
 | Category             | Technology Used                    |
 |----------------------|------------------------------------|
 | Frontend             | Streamlit                          |
-| Voice Recognition    | SpeechRecognition, Pyttsx3         |
-| Translation          | Googletrans                        |
-| AI Model             | Groq API (Mixtral-8x7B)            |
+| Voice Recognition    | Whisper + torchaudio               |
+| Translation          | deep_translator (GoogleTranslator) |
+| AI Model             | Whisper (OpenAI model via          | 
+                         HuggingFace)                       |
+| Text-to-Speech       | gTTS (Google Text-to-Speech)       |
 | Emotion Detection    | HuggingFace Sentiment Models       |
 | Deployment           | Hugging Face Spaces (Streamlit)    |
 | Platform             | Google Colab, GitHub               |
