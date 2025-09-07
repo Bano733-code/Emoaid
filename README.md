@@ -29,11 +29,12 @@ through text or voice in English, Urdu, Hindi etc.
 | Category             | Technology Used                    |
 |----------------------|------------------------------------|
 | Frontend             | Streamlit                          |
-| Voice Recognition    | Whisper + torchaudio               |
+| Voice Recognition    | streamlit-mic-recorder + Groq      |
+|                      |   Whisper API                      |
 | Translation          | deep_translator (GoogleTranslator) |
 | AI Model             | GROQ API                           |
 | Text-to-Speech       | gTTS (Google Text-to-Speech)       |
-| Emotion Detection    | HuggingFace Sentiment Models       |
+| Emotion Detection    | Keyword-based classifier           |
 | Deployment           | Hugging Face Spaces (Streamlit)    |
 | Platform             | Google Colab, GitHub               |
 
@@ -53,7 +54,7 @@ streamlit run app.py
 
 2.Translation (Urdu/Punjabi/any other language → English)
 
-3.Sentiment & Mood Tagging (HuggingFace)
+3.Sentiment & Mood Tagging (keyword based)
 
 4.LLM (Groq API with Custom Prompting)
 
