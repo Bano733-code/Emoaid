@@ -1,9 +1,5 @@
 streamlit
-streamlit_mic_recorder
-transformers==4.34.1
-torch
-torchaudio
-gtts
+requests
 deep-translator
-googletrans==4.0.0-rc1
-requests 
+gTTS
+streamlit-mic-recorder
