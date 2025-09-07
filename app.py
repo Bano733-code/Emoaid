@@ -7,37 +7,60 @@ import os
 import uuid
 import base64
 from streamlit_mic_recorder import mic_recorder
-import tempfile
-import torchaudio
-from transformers import WhisperProcessor, WhisperForConditionalGeneration
-
 
 # ------------------- CONFIG -------------------
-st.set_page_config(page_title="EmoAid: Chatbot for Sensitive Souls", layout="centered")
+st.set_page_config(page_title="🌸 EmoAid: Chatbot for Sensitive Souls", layout="centered")
 
 # ------------------- HELPERS -------------------
+def get_groq_chat(user_input, personality, api_key):
+    """Call Groq Chat API"""
+    prompt = f"""
+You are a {personality} for someone who's emotionally sensitive. 
+Follow this structure in your response:
 
-def get_groq_response(user_input, personality, api_key):
-    prompt = f"You are a {personality} for someone who's emotionally sensitive. Respond gently to: {user_input}"
-    headers = {
-        "Authorization": f"Bearer {api_key}",
-        "Content-Type": "application/json"
-    }
+1. Start with a gentle and supportive reply (about 7 lines, empathetic and understanding).
+2. Then provide exactly 3 short practical tips in bullet points.
+3. End with a heartfelt encouragement based on the user's feeling and also give a quote according to feelings of user.
+
+Keep language simple, caring, and maximum 15-25 lines in total.
+
+User feeling/message: {user_input}
+"""
+#Respond to: {user_input}"
+
+    headers = {"Authorization": f"Bearer {api_key}", "Content-Type": "application/json"}
     payload = {
-        "model": "llama3-70b-8192",
+        "model": "llama-3.3-70b-versatile",
         "messages": [{"role": "user", "content": prompt}]
     }
-    response = requests.post("https://api.groq.com/openai/v1/chat/completions", headers=headers, json=payload)
-    if response.status_code == 200:
-        return response.json()["choices"][0]["message"]["content"]
+    r = requests.post("https://api.groq.com/openai/v1/chat/completions", headers=headers, json=payload)
+    if r.status_code == 200:
+        data = r.json()
+        return data["choices"][0].get("message", {}).get("content", "❌ No response")
+
     else:
-        return f"❌ Error: {response.text}"
+        return f"❌ Chat error: {r.text}"
+
+
+def get_groq_transcription(audio_path, api_key):
+    """Call Groq Whisper API"""
+    headers = {"Authorization": f"Bearer {api_key}"}
+    with open(audio_path, "rb") as f:
+        files = {"file": f}
+        data = {"model": "whisper-large-v3"}
+        r = requests.post("https://api.groq.com/openai/v1/audio/transcriptions", headers=headers, files=files, data=data)
+    if r.status_code == 200:
+        return r.json()["text"]
+    else:
+        return ""
+
 
 def translate_text(text, target_lang):
     try:
-        return GoogleTranslator(source='auto', target=target_lang).translate(text)
+        return GoogleTranslator(source="auto", target=target_lang).translate(text)
     except Exception as e:
         return f"Translation error: {e}"
+
 
 def detect_mood(text):
     keywords = {
@@ -53,6 +76,7 @@ def detect_mood(text):
             return mood
     return "neutral"
 
+
 def speak_text(text, lang="en"):
     filename = f"speech_{uuid.uuid4().hex}.mp3"
     tts = gTTS(text=text, lang=lang)
@@ -64,116 +88,135 @@ def speak_text(text, lang="en"):
         st.markdown(audio_html, unsafe_allow_html=True)
     os.remove(filename)
 
+
 # ------------------- SIDEBAR -------------------
 st.sidebar.title("🧠 EmoAid Settings")
-# Hide Groq API key - load from secrets or env variable
 api_key = st.secrets.get("GROQ_API_KEY", None) or os.getenv("GROQ_API_KEY")
-
 if not api_key:
     st.error("❌ Groq API key not found. Please set it in secrets.toml or as an environment variable.")
-
-language = st.sidebar.selectbox("🌍 Language", ["English", "Urdu", "Punjabi","Korean","Bangoli","Hindi","Pahto","Balochi","French","Arabic","Chinese","Spanish","German"])
 language_codes = {
-    "English": "en",
-    "Urdu": "ur",
-    "Punjabi": "pa",
-    "Korean": "ko",
-    "Bangoli": "bn",
-    "Hindi": "hi",
-    "Pahto": "ps",
-    "Balochi": "bal",
-    "French": "fr",
+    "Afrikaans": "af",
     "Arabic": "ar",
-    "Chinese": "zh-CN",
+    "Bengali": "bn",
+    "Bosnian": "bs",
+    "Catalan": "ca",
+    "Czech": "cs",
+    "Welsh": "cy",
+    "Danish": "da",
+    "German": "de",
+    "Greek": "el",
+    "English": "en",
+    "Esperanto": "eo",
     "Spanish": "es",
-    "German": "de"
+    "Estonian": "et",
+    "Finnish": "fi",
+    "French": "fr",
+    "Gujarati": "gu",
+    "Hindi": "hi",
+    "Croatian": "hr",
+    "Hungarian": "hu",
+    "Indonesian": "id",
+    "Icelandic": "is",
+    "Italian": "it",
+    "Japanese": "ja",
+    "Javanese": "jw",
+    "Khmer": "km",
+    "Kannada": "kn",
+    "Korean": "ko",
+    "Latin": "la",
+    "Latvian": "lv",
+    "Macedonian": "mk",
+    "Malayalam": "ml",
+    "Marathi": "mr",
+    "Myanmar (Burmese)": "my",
+    "Nepali": "ne",
+    "Dutch": "nl",
+    "Norwegian": "no",
+    "Punjabi": "pa",
+    "Polish": "pl",
+    "Portuguese": "pt",
+    "Romanian": "ro",
+    "Russian": "ru",
+    "Sinhala": "si",
+    "Slovak": "sk",
+    "Albanian": "sq",
+    "Serbian": "sr",
+    "Sundanese": "su",
+    "Swedish": "sv",
+    "Swahili": "sw",
+    "Tamil": "ta",
+    "Telugu": "te",
+    "Thai": "th",
+    "Filipino": "tl",
+    "Turkish": "tr",
+    "Ukrainian": "uk",
+    "Urdu": "ur",
+    "Vietnamese": "vi",
+    "Chinese (Mandarin)": "zh-CN"
 }
+language = st.sidebar.selectbox("🌍 Language", list(language_codes.keys()))
 
-personality = st.sidebar.selectbox("🎭 Personality Mode", ["Therapist", "Motivator", "Funny Friend",
-    "Wise Elder", "Gentle Listener", "Romantic Poet",
-    "Spiritual Guide", "Empathetic Sister", "Tough Love Coach",
-    "Stoic Philosopher", "Inner Child"])
+personality = st.sidebar.radio("🎭 Personality Mode",
+    ["Therapist", "Motivator", "Funny Friend","Wise Elder","Gentle Listener",
+     "Romantic Poet", "Spiritual Guide","Empathetic Sister", "Tough Love Coach",
+     "Stoic Philosopher", "Inner Child"])
 speak = st.sidebar.checkbox("🔊 Enable Voice Response")
 
 # ------------------- MAIN APP -------------------
-st.title("🩷 EmoAid: Chatbot for Sensitive Souls")
+st.title("🌸 EmoAid: Chatbot for Sensitive Souls")
 st.markdown("Helping you feel heard, healed, and hopeful ✨")
 
 if "chat_history" not in st.session_state:
     st.session_state.chat_history = []
 
-st.subheader("🎙️ Voice Input (Multilingual)")
-audio = mic_recorder(start_prompt="🎤 Speak", stop_prompt="⏹️ Stop", just_once=True, key='voice')
+# ------------------- VOICE INPUT -------------------
+st.subheader("🎙️ Voice Input")
 
-# Load Whisper only once
-@st.cache_resource
-def load_whisper():
-    processor = WhisperProcessor.from_pretrained("openai/whisper-small")
-    model = WhisperForConditionalGeneration.from_pretrained("openai/whisper-small")
-    return processor, model
-
-processor, model = load_whisper()
+voice = mic_recorder(start_prompt="🎤 Record", stop_prompt="⏹️ Stop", just_once=True)
 
 voice_text = ""
+if voice:
+    st.audio(voice['bytes'])  # playback recorded audio
+    with open("temp.wav", "wb") as f:
+        f.write(voice['bytes'])
+    voice_text = get_groq_transcription("temp.wav", api_key)
+    if voice_text:
+        st.success(f"🎤 Voice captured: {voice_text}")
+    else:
+        st.warning("⚠️ Could not transcribe voice.")
 
-if audio:
-    st.audio(audio["bytes"], format="audio/wav")
-
-    with tempfile.NamedTemporaryFile(suffix=".wav", delete=False) as tmpfile:
-        tmpfile.write(audio["bytes"])
-        tmpfile_path = tmpfile.name
-
-    # Transcribe
-    audio_waveform, sr = torchaudio.load(tmpfile_path)
-
-# Resample if sampling rate is not 16000
-    if sr != 16000:
-        resampler = torchaudio.transforms.Resample(orig_freq=sr, new_freq=16000)
-        audio_waveform = resampler(audio_waveform)
-        sr = 16000  # Update to new rate
-
-    input_features = processor(audio_waveform.squeeze(), sampling_rate=sr, return_tensors="pt").input_features
-    predicted_ids = model.generate(input_features)
-    transcription = processor.batch_decode(predicted_ids, skip_special_tokens=True)[0]
-
-    voice_text = transcription
-    st.success(f"📝 You said: **{voice_text}**")
-
-# Combine voice + text input
-#user_input = st.text_area("💬 Type your message here OR use your voice above", value=voice_text, height=100)
-# Store user input (text or voice) in session state
+# ------------------- USER INPUT -------------------
 if "user_input" not in st.session_state:
     st.session_state.user_input = ""
 
-# If voice input is available, override the input
 if voice_text:
     st.session_state.user_input = voice_text
 
-# Input box (editable by user after voice transcription too)
-user_input = st.text_area("💬 Type your message here OR use your voice above", value=st.session_state.user_input, height=100)
+user_input = st.text_area("💬 Type your message here OR use your voice above",
+                          value=st.session_state.user_input, height=100)
 
+# ------------------- PROCESS -------------------
 if st.button("Send") and user_input:
     st.session_state.chat_history.append(("You", user_input))
     if not api_key:
         st.warning("Please add your GROQ API key.")
     else:
-        response = get_groq_response(user_input, personality, api_key)
-
+        response = get_groq_chat(user_input, personality, api_key)
         target_lang_code = language_codes.get(language, "en")
-
-        if language != "English":
-            response_translated = translate_text(response, target_lang=target_lang_code)
-        else:
-            response_translated = response
+        response_translated = response if language == "English" else translate_text(response, target_lang_code)
 
         mood_tag = detect_mood(user_input)
-        st.session_state.chat_history.append(("EmoAid", f"{response_translated} \n\n💬 *Mood Detected: {mood_tag}*"))
+        st.session_state.chat_history.append(("EmoAid", f"{response_translated} \n\n💬 *Mood: {mood_tag}*"))
+
         if speak:
-           speak_text(response_translated, lang=target_lang_code)
+            speak_text(response_translated, lang=target_lang_code)
+
+    st.session_state.user_input = ""
 
 # ------------------- CHAT DISPLAY -------------------
 st.markdown("---")
 st.subheader("🕊️ Chat History")
 for sender, message in st.session_state.chat_history[::-1]:
-    with st.chat_message(sender): 
-        st.markdown(message)
+    role = "user" if "You" in sender else "assistant"
+    with st.chat_message(role):
+        st.markdown(f"**{sender}:** {message}")
